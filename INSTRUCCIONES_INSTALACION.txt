@@ -1,0 +1,178 @@
+============================================================
+  ControlMetrics – Sistema de Control Estadístico de Procesos
+  PMD y Cía S.C.A. | Universidad del Magdalena, 2025
+============================================================
+
+INSTRUCCIONES DE INSTALACIÓN Y EJECUCIÓN
+-----------------------------------------
+
+REQUISITOS DEL SISTEMA
+-----------------------
+  - Sistema Operativo : Windows 10 / 11 (64 bits)
+  - Python            : 3.10 o superior  (probado con Python 3.14.4)
+  - Espacio en disco  : aprox. 200 MB (incluye librerías)
+  - RAM               : mínimo 2 GB recomendados
+  - Conexión a internet: solo requerida para la instalación inicial
+
+
+PASO 1 – INSTALAR PYTHON
+------------------------
+  1. Descargue Python desde https://www.python.org/downloads/
+     (versión 3.10 o superior, recomendado 3.11 / 3.12 LTS)
+
+  2. Durante la instalación, marque la casilla:
+       [✓] Add Python to PATH
+     Luego haga clic en "Install Now".
+
+  3. Para verificar la instalación, abra el Símbolo del sistema (cmd)
+     y ejecute:
+       python --version
+     Debería mostrar algo como:  Python 3.11.x
+
+
+PASO 2 – INSTALAR LAS LIBRERÍAS REQUERIDAS
+-------------------------------------------
+  Abra el Símbolo del sistema (cmd) en la carpeta del proyecto
+  (la misma carpeta donde se encuentra este archivo), luego ejecute:
+
+    pip install -r requirements.txt
+
+  Esto instalará automáticamente:
+    • numpy       – Cálculos numéricos y estadísticos
+    • scipy       – Distribuciones de probabilidad y pruebas estadísticas
+    • matplotlib  – Generación de gráficas de control
+    • openpyxl    – Lectura y escritura de archivos Excel (.xlsx)
+
+  Tkinter (interfaz gráfica) ya viene incluido con Python en Windows.
+
+
+PASO 3 – EJECUTAR LA APLICACIÓN
+---------------------------------
+  OPCIÓN A – Doble clic (más fácil):
+    Haga doble clic en el archivo:
+      Iniciar SPC Manager.bat
+
+  OPCIÓN B – Desde el Símbolo del sistema:
+    Navegue a la carpeta del proyecto y ejecute:
+      python main.py
+
+  OPCIÓN C – Desde un IDE (VS Code, PyCharm, Spyder):
+    Abra la carpeta del proyecto como workspace y ejecute main.py.
+
+
+ESTRUCTURA DEL PROYECTO
+------------------------
+  Software SPC/
+  │
+  ├── main.py                    Punto de entrada de la aplicación
+  ├── app.py                     Ventana principal y navegación por pestañas
+  ├── config.py                  Colores, fuentes, constantes SPC, datos de prueba
+  ├── requirements.txt           Librerías requeridas (pip)
+  │
+  ├── modules/                   Módulos funcionales (una pestaña por módulo)
+  │   ├── normalidad.py          Pruebas de normalidad + independencia (AD, SW, KS, DW, rachas)
+  │   ├── cartas_xr.py           Cartas de control X̄ – R con reglas Western Electric
+  │   ├── cartas_xs.py           Cartas de control X̄ – S con reglas Western Electric
+  │   ├── cartas_pnpu.py         Cartas por atributos: p, np, u
+  │   ├── carta_c.py             Carta C y Diagrama de Pareto
+  │   ├── capacidad.py           Índices de capacidad Cp, Cpk, Cpu, Cpl
+  │   ├── muestreo.py            Plan de muestreo MIL-STD-105E / curva OC
+  │   └── diseno.py              Herramienta de diseño ARL / ATS
+  │
+  └── utils/
+      ├── spc_utils.py           Funciones estadísticas (límites, WE, potencia, ARL...)
+      └── widgets.py             Widget CollapsibleChart (gráficas colapsables)
+
+
+DATOS DE PRUEBA INCLUIDOS
+--------------------------
+  Los datos del estudio de PMD y Cía S.C.A. (fruta prepesada – 3 libras)
+  están precargados en config.py y disponibles en cada módulo mediante
+  el botón "Cargar datos del estudio" o "Cargar Fase I / Fase II".
+
+  También se incluye el archivo Excel de datos reales:
+    Muestras-Proyecto de control.xlsx
+
+  Contiene:
+    - 30 subgrupos de Fase I (n=6 observaciones cada uno)
+    - 30 subgrupos de Fase II para monitoreo
+
+
+MÓDULOS Y FUNCIONALIDADES
+--------------------------
+  1. NORMALIDAD
+     - Pruebas estadísticas: Anderson-Darling, Shapiro-Wilk, Kolmogorov-Smirnov
+     - Histograma + curva normal ajustada
+     - Gráfico de probabilidad normal (Q-Q plot)
+     - Pruebas de independencia: Durbin-Watson, Rachas, Autocorrelación lag-1
+
+  2. CARTAS X̄ – R
+     - Fase I (estabilización) y Fase II (monitoreo)
+     - Reglas de Western Electric / Nelson (6 reglas de patrones)
+     - Análisis de potencia (curva de potencia Fase II)
+     - Carga desde Excel (.xlsx)
+
+  3. CARTAS X̄ – S
+     - Constantes SPC: c4, A3, B3, B4 (Montgomery 2020)
+     - Reglas de Western Electric sobre carta X̄
+     - Fase I y Fase II
+
+  4. CARTAS p / np / u
+     - Selector de tipo de carta (p, np, u)
+     - UCL/LCL variables por tamaño de muestra (cartas p y u)
+     - Detección automática de puntos fuera de control
+
+  5. CARTA C / PARETO
+     - Carta C para defectos por unidad
+     - Diagrama de Pareto con curva de porcentaje acumulado
+
+  6. CAPACIDAD (Cp / Cpk)
+     - Índices Cp, Cpk, Cpu, Cpl
+     - Porcentaje de no conformes (PNC)
+     - Nivel sigma del proceso
+
+  7. PLAN DE MUESTREO
+     - Estándar MIL-STD-105E (Nivel II, muestreo simple normal)
+     - Curva de operación característica (OC)
+     - Tamaño de lote → letra código → plan (n, Ac, Re)
+
+  8. DISEÑO ARL / ATS
+     - Calcula ARL₀, ARL₁, ATS₀, ATS₁
+     - Curva ARL y curva OC comparativa (hasta 3 diseños)
+     - ARL₀ ≈ 370.4 para k=3 (carta ±3σ estándar)
+
+
+SOLUCIÓN DE PROBLEMAS
+----------------------
+  Error: "pip no se reconoce como comando"
+    → Python no está en el PATH. Reinstale Python marcando "Add Python to PATH".
+
+  Error: "No module named 'numpy'"
+    → Ejecute:  pip install -r requirements.txt
+
+  Error: "No module named 'tkinter'"
+    → Tkinter no está incluido en su instalación de Python. Reinstale
+      Python desde python.org seleccionando la instalación completa.
+
+  La ventana se abre pero las gráficas no aparecen:
+    → Actualice matplotlib:  pip install --upgrade matplotlib
+
+  El archivo Excel no carga:
+    → Asegúrese de que el archivo no esté abierto en Excel al mismo tiempo.
+    → Verifique que sea formato .xlsx (no .xls ni .csv).
+
+
+REFERENCIA BIBLIOGRÁFICA
+-------------------------
+  Montgomery, D. C. (2020). Introduction to Statistical Quality Control
+  (8th ed.). John Wiley & Sons.
+
+  MIL-STD-105E (1989). Sampling Procedures and Tables for Inspection
+  by Attributes. U.S. Department of Defense.
+
+
+============================================================
+  Desarrollado por: PMD y Cía S.C.A.
+  Universidad del Magdalena – Ingeniería Industrial, 2025
+  Versión: 1.0.0
+============================================================

@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.spec
+
+# Entornos virtuales
+venv/
+env/
+.venv/
+.env/
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos temporales Python
+*.log
+*.tmp
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Archivos Excel generados
+*.xlsx
+*.xls
+
+# Archivos temporales de Office
+~$*
+
+# Claude Code (configuración local del IDE)
+.claude/
