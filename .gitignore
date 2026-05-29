@@ -1,11 +1,10 @@
-# Python
+﻿# Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 *.egg
 *.egg-info/
-dist/
 build/
 *.spec
 
@@ -42,5 +41,5 @@ desktop.ini
 # Archivos temporales de Office
 ~$*
 
-# Claude Code (configuración local del IDE)
+# Claude Code (configuraciÃ³n local del IDE)
 .claude/
