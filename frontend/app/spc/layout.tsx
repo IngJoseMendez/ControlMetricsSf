@@ -81,9 +81,11 @@ export default function SPCLayout({ children }: { children: React.ReactNode }) {
         {/* Logo + controls */}
         <div className="px-4 py-4 border-b border-green-800 dark:border-gray-800">
           <div className="flex items-center gap-2.5 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center flex-shrink-0">
-              <BarChart2 className="w-4.5 h-4.5 text-gray-900" />
-            </div>
+            <img
+              src="https://res.cloudinary.com/dxl97cptv/image/upload/v1780110707/WhatsApp_Image_2026-05-29_at_9.45.19_PM_kho7wo.jpg"
+              alt="Logo"
+              className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
+            />
             <div className="min-w-0">
               <p className="font-bold text-sm leading-none">ControlMetrics</p>
               <p className="text-green-400 text-xs mt-0.5">SPC Software</p>

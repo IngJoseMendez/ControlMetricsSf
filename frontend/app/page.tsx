@@ -70,10 +70,12 @@ export default function LandingPage() {
       {/* ── Navbar ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-green-700 flex items-center justify-center">
-              <BarChart2 className="w-5 h-5 text-white" />
-            </div>
+          <div className="flex items-center gap-2.5">
+            <img
+              src="https://res.cloudinary.com/dxl97cptv/image/upload/v1780110707/WhatsApp_Image_2026-05-29_at_9.45.19_PM_kho7wo.jpg"
+              alt="Logo"
+              className="w-9 h-9 rounded-lg object-cover shadow-sm"
+            />
             <span className="font-bold text-lg text-gray-900">ControlMetrics</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { BarChart2, Mail, Lock, User, CheckCircle, XCircle } from 'lucide-react';
+import { Mail, Lock, User, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLang } from '@/contexts/LangContext';
 
@@ -40,9 +40,11 @@ export function AuthModal() {
         <div className="md:w-80 bg-green-900 text-white p-8 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center">
-                <BarChart2 className="w-6 h-6 text-gray-900" />
-              </div>
+              <img
+                src="https://res.cloudinary.com/dxl97cptv/image/upload/v1780110707/WhatsApp_Image_2026-05-29_at_9.45.19_PM_kho7wo.jpg"
+                alt="Logo"
+                className="w-10 h-10 rounded-xl object-cover"
+              />
               <div>
                 <p className="font-bold text-lg leading-none">ControlMetrics</p>
                 <p className="text-green-400 text-xs mt-0.5">SPC Software</p>
