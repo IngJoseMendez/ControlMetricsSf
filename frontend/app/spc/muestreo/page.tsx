@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ModuleShell } from '@/components/spc/ModuleShell';
 import { ChartCard } from '@/components/spc/ChartCard';
+import { useHistory } from '@/hooks/useHistory';
+import { ExcelUpload } from '@/components/ui/ExcelUpload';
 
 export default function MuestreoPage() {
   const [nLote, setNLote] = useState('960');
@@ -13,6 +15,7 @@ export default function MuestreoPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
+  const { add: addHistory } = useHistory();
 
   const run = async () => {
     const nLoteN = parseInt(nLote);
@@ -28,6 +31,7 @@ export default function MuestreoPage() {
       }
       const res = await api.muestreo.calcular(body);
       setResult(res);
+      addHistory('muestreo', { nLote, nac }, { 'n plan': res.n, Ac: res.ac, AOQL: `${res.aoql}%` });
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -43,6 +47,17 @@ export default function MuestreoPage() {
     <ModuleShell
       title="Plan de Muestreo por Aceptación"
       subtitle="MIL-STD-105E · Curva COP · Calidad Promedio de Salida (AOQ)"
+      templateConfig={{
+        module: 'muestreo',
+        getParams: () => ({ nLote, nac, useManual, nPlan, cPlan }),
+        onLoad: (p: any) => {
+          if (p.nLote) setNLote(p.nLote);
+          if (p.nac) setNac(p.nac);
+          if (p.useManual !== undefined) setUseManual(p.useManual);
+          if (p.nPlan) setNPlan(p.nPlan);
+          if (p.cPlan) setCPlan(p.cPlan);
+        },
+      }}
       leftPanel={
         <>
           <div>
@@ -88,6 +103,14 @@ export default function MuestreoPage() {
             )}
           </div>
 
+          <ExcelUpload
+            module="muestreo"
+            onData={(d: any) => {
+              if (d.n_lote) setNLote(String(d.n_lote));
+              if (d.nac) setNac(String(d.nac));
+            }}
+            onError={setError}
+          />
           <button onClick={run}
             className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
             {loading ? 'Calculando…' : 'Calcular Plan'}

@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ModuleShell } from '@/components/spc/ModuleShell';
 import { ChartCard } from '@/components/spc/ChartCard';
+import { useHistory } from '@/hooks/useHistory';
+import { ExcelUpload } from '@/components/ui/ExcelUpload';
 
 export default function CapacidadPage() {
   const [raw, setRaw] = useState('');
@@ -14,6 +16,7 @@ export default function CapacidadPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
+  const { add: addHistory } = useHistory();
 
   const parseData = () =>
     raw.replace(/[,;\n]/g, ' ').split(/\s+/).filter(Boolean).map(Number).filter(n => !isNaN(n));
@@ -33,6 +36,7 @@ export default function CapacidadPage() {
         sigma: sigmaMode === 'manual' ? parseFloat(sigmaVal) : undefined,
       });
       setResult(res);
+      addHistory('capacidad', { lie, lse, target }, { Cpk: res.cpk, nivel: res.nivel });
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -56,6 +60,18 @@ export default function CapacidadPage() {
     <ModuleShell
       title="Capacidad del Proceso"
       subtitle="Cp · Cpk · Cpu · Cpl · Nivel Sigma · % No Conformes"
+      templateConfig={{
+        module: 'capacidad',
+        getParams: () => ({ raw, lie, lse, target, sigmaMode, sigmaVal }),
+        onLoad: (p: any) => {
+          if (p.raw) setRaw(p.raw);
+          if (p.lie) setLie(p.lie);
+          if (p.lse) setLse(p.lse);
+          if (p.target) setTarget(p.target);
+          if (p.sigmaMode) setSigmaMode(p.sigmaMode);
+          if (p.sigmaVal) setSigmaVal(p.sigmaVal);
+        },
+      }}
       leftPanel={
         <>
           <div>
@@ -97,6 +113,11 @@ export default function CapacidadPage() {
             )}
           </div>
 
+          <ExcelUpload
+            module="capacidad"
+            onData={(d: any) => setRaw(d.data.join('\n'))}
+            onError={setError}
+          />
           <button onClick={run}
             className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
             {loading ? 'Calculando…' : 'Calcular Capacidad'}

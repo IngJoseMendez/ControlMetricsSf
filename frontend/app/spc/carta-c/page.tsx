@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ModuleShell } from '@/components/spc/ModuleShell';
 import { ChartCard } from '@/components/spc/ChartCard';
+import { useHistory } from '@/hooks/useHistory';
+import { ExcelUpload } from '@/components/ui/ExcelUpload';
 
 export default function CartaCPage() {
   const [rawDefects, setRawDefects] = useState('');
@@ -11,6 +13,7 @@ export default function CartaCPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
+  const { add: addHistory } = useHistory();
 
   const parseDefects = () =>
     rawDefects.replace(/[,;\n]/g, ' ').split(/\s+/).filter(Boolean).map(Number).filter(n => !isNaN(n)).map(Math.round);
@@ -39,6 +42,7 @@ export default function CartaCPage() {
         acept: parseInt(acept),
       });
       setResult(res);
+      addHistory('carta-c', { acept }, { 'C̄': res.c_bar?.toFixed(3), OOC: res.ooc?.length ?? 0 });
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -53,6 +57,15 @@ export default function CartaCPage() {
     <ModuleShell
       title="Carta C + Diagrama de Pareto"
       subtitle="Defectos por unidad (distribución de Poisson) · Análisis 80/20"
+      templateConfig={{
+        module: 'carta-c',
+        getParams: () => ({ rawDefects, rawTipos, acept }),
+        onLoad: (p: any) => {
+          if (p.rawDefects) setRawDefects(p.rawDefects);
+          if (p.rawTipos) setRawTipos(p.rawTipos);
+          if (p.acept) setAcept(p.acept);
+        },
+      }}
       leftPanel={
         <>
           <div>
@@ -78,6 +91,14 @@ export default function CartaCPage() {
               value={rawTipos} onChange={e => setRawTipos(e.target.value)}
               placeholder="Speckling,5&#10;Trips,4&#10;Mancha roja,3&#10;..." />
           </div>
+          <ExcelUpload
+            module="carta-c"
+            onData={(d: any) => {
+              if (d.cajas) setRawDefects(d.cajas.join('\n'));
+              if (d.tipos) setRawTipos(Object.entries(d.tipos).map(([k, v]) => `${k},${v}`).join('\n'));
+            }}
+            onError={setError}
+          />
           <button onClick={run}
             className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 rounded-lg text-sm">
             {loading ? 'Calculando…' : 'Calcular'}

@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ModuleShell } from '@/components/spc/ModuleShell';
 import { ChartCard } from '@/components/spc/ChartCard';
+import { useHistory } from '@/hooks/useHistory';
+import { ExcelUpload } from '@/components/ui/ExcelUpload';
 
 export default function NormalidadPage() {
   const [raw, setRaw] = useState('');
@@ -10,6 +12,7 @@ export default function NormalidadPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
+  const { add: addHistory } = useHistory();
 
   const parseData = () =>
     raw.replace(/[,;\n]/g, ' ').split(/\s+/).filter(Boolean).map(Number).filter(n => !isNaN(n));
@@ -21,6 +24,10 @@ export default function NormalidadPage() {
     try {
       const res = await api.normalidad.analizar(data, parseFloat(alpha));
       setResult(res);
+      addHistory('normalidad', { alpha, n: data.length }, {
+        'AD normal': res.tests?.AD?.normal ? '✔' : '✘',
+        'n': data.length,
+      });
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -42,6 +49,11 @@ export default function NormalidadPage() {
     <ModuleShell
       title="Análisis de Normalidad"
       subtitle="Anderson-Darling · Shapiro-Wilk · Kolmogorov-Smirnov · Pruebas de independencia"
+      templateConfig={{
+        module: 'normalidad',
+        getParams: () => ({ raw, alpha }),
+        onLoad: (p: any) => { if (p.raw) setRaw(p.raw); if (p.alpha) setAlpha(p.alpha); },
+      }}
       leftPanel={
         <>
           <div>
@@ -60,6 +72,11 @@ export default function NormalidadPage() {
               <option value="0.10">0.10</option>
             </select>
           </div>
+          <ExcelUpload
+            module="normalidad"
+            onData={(d: any) => setRaw(d.data.join('\n'))}
+            onError={setError}
+          />
           <button onClick={run}
             className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
             {loading ? 'Analizando…' : 'Analizar'}
@@ -77,7 +94,6 @@ export default function NormalidadPage() {
       }
       rightPanel={
         <>
-          {/* Estadísticas descriptivas */}
           {s && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
               <h3 className="text-sm font-bold text-gray-800 mb-3">Estadísticas Descriptivas</h3>
@@ -95,8 +111,6 @@ export default function NormalidadPage() {
               </div>
             </div>
           )}
-
-          {/* Tabla de pruebas */}
           {tests && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="px-4 py-3 bg-green-900">
@@ -104,22 +118,19 @@ export default function NormalidadPage() {
               </div>
               <table className="w-full text-sm">
                 <thead className="bg-gray-50">
-                  <tr>
-                    {['Prueba', 'Estadístico', 'Valor-p', 'α', 'Conclusión'].map(h =>
-                      <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-600">{h}</th>
-                    )}
-                  </tr>
+                  <tr>{['Prueba', 'Estadístico', 'Valor-p', 'α', 'Conclusión'].map(h =>
+                    <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-600">{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {[['AD', 'Anderson-Darling'], ['SW', 'Shapiro-Wilk'], ['KS', 'Kolmogorov-Smirnov']].map(([k, name]) => {
-                    const t = tests[k];
+                    const tt = tests[k];
                     return (
                       <tr key={k} className="border-t border-gray-100">
                         <td className="px-3 py-2 font-medium">{name}</td>
-                        <td className="px-3 py-2 font-mono text-xs">{t?.statistic?.toFixed(4)}</td>
-                        <td className="px-3 py-2 font-mono text-xs">{t?.p_value?.toFixed(4)}</td>
+                        <td className="px-3 py-2 font-mono text-xs">{tt?.statistic?.toFixed(4)}</td>
+                        <td className="px-3 py-2 font-mono text-xs">{tt?.p_value?.toFixed(4)}</td>
                         <td className="px-3 py-2 font-mono text-xs">{alpha}</td>
-                        <td className="px-3 py-2">{testLabel(t?.normal)}</td>
+                        <td className="px-3 py-2">{testLabel(tt?.normal)}</td>
                       </tr>
                     );
                   })}
@@ -127,8 +138,6 @@ export default function NormalidadPage() {
               </table>
             </div>
           )}
-
-          {/* Pruebas de independencia */}
           {ind && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="px-4 py-3 bg-slate-700">
@@ -136,11 +145,8 @@ export default function NormalidadPage() {
               </div>
               <table className="w-full text-sm">
                 <thead className="bg-gray-50">
-                  <tr>
-                    {['Prueba', 'Estadístico', 'Detalle', 'Conclusión'].map(h =>
-                      <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-600">{h}</th>
-                    )}
-                  </tr>
+                  <tr>{['Prueba', 'Estadístico', 'Detalle', 'Conclusión'].map(h =>
+                    <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-600">{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   <tr className="border-t border-gray-100">
@@ -165,8 +171,6 @@ export default function NormalidadPage() {
               </table>
             </div>
           )}
-
-          {/* Gráficas */}
           <ChartCard title="Histograma + Curva Normal + Gráfico Q-Q"
             src={result?.charts?.combined} loading={loading && !result} />
         </>

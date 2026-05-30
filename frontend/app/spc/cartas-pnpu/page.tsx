@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ModuleShell } from '@/components/spc/ModuleShell';
 import { ChartCard } from '@/components/spc/ChartCard';
+import { useHistory } from '@/hooks/useHistory';
 
 type ChartType = 'p' | 'np' | 'u';
 
@@ -14,6 +15,7 @@ export default function CartasPNPUPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
+  const { add: addHistory } = useHistory();
 
   const parseList = (s: string) =>
     s.replace(/[,;\n]/g, ' ').split(/\s+/).filter(Boolean).map(Number).filter(n => !isNaN(n));
@@ -28,6 +30,7 @@ export default function CartasPNPUPage() {
       else body.sizes = parseList(rawSizes);
       const res = await api.cartasPnpu.calcular(body);
       setResult(res);
+      addHistory('cartas-pnpu', { chartType }, { tipo: chartType, OOC: res.ooc?.length ?? 0 });
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -42,6 +45,16 @@ export default function CartasPNPUPage() {
     <ModuleShell
       title="Cartas de Control por Atributos"
       subtitle="Proporción no conforme (p) · Número no conforme (np) · Defectos por unidad (u)"
+      templateConfig={{
+        module: 'cartas-pnpu',
+        getParams: () => ({ chartType, rawCounts, rawSizes, nConst }),
+        onLoad: (p: any) => {
+          if (p.chartType) setChartType(p.chartType);
+          if (p.rawCounts) setRawCounts(p.rawCounts);
+          if (p.rawSizes) setRawSizes(p.rawSizes);
+          if (p.nConst) setNConst(p.nConst);
+        },
+      }}
       leftPanel={
         <>
           <div>

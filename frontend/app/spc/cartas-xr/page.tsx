@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ModuleShell } from '@/components/spc/ModuleShell';
 import { ChartCard } from '@/components/spc/ChartCard';
+import { useHistory } from '@/hooks/useHistory';
+import { ExcelUpload } from '@/components/ui/ExcelUpload';
 
 export default function CartasXRPage() {
   const [rawRows, setRawRows] = useState('');
@@ -13,6 +15,7 @@ export default function CartasXRPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
+  const { add: addHistory } = useHistory();
 
   const parseSubgroups = () => {
     const nv = parseInt(n);
@@ -33,6 +36,7 @@ export default function CartasXRPage() {
         target: parseFloat(target) || undefined,
       });
       setResult(res);
+      addHistory('cartas-xr', { n, lie, lse }, { OOC_X: res.ooc_x?.length ?? 0, OOC_R: res.ooc_r?.length ?? 0 });
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -56,6 +60,17 @@ export default function CartasXRPage() {
     <ModuleShell
       title="Cartas de Control X̄ – R"
       subtitle="Variables · Subgrupos · Reglas de Western Electric · Curva de Potencia"
+      templateConfig={{
+        module: 'cartas-xr',
+        getParams: () => ({ rawRows, n, lie, lse, target }),
+        onLoad: (p: any) => {
+          if (p.rawRows) setRawRows(p.rawRows);
+          if (p.n) setN(p.n);
+          if (p.lie) setLie(p.lie);
+          if (p.lse) setLse(p.lse);
+          if (p.target) setTarget(p.target);
+        },
+      }}
       leftPanel={
         <>
           <div>
@@ -83,6 +98,14 @@ export default function CartasXRPage() {
               </div>
             ))}
           </div>
+          <ExcelUpload
+            module="cartas-xr"
+            onData={(d: any) => {
+              setRawRows(d.data.map((r: number[]) => r.join('\t')).join('\n'));
+              if (d.data[0]?.length) setN(String(d.data[0].length));
+            }}
+            onError={setError}
+          />
           <button onClick={run}
             className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">
             {loading ? 'Calculando…' : 'Calcular Cartas'}

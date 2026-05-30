@@ -7,7 +7,7 @@ matplotlib.use('Agg')
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import normalidad, cartas_xr, cartas_pnpu, carta_c, capacidad, muestreo, mejora
+from routers import normalidad, cartas_xr, cartas_pnpu, carta_c, capacidad, muestreo, mejora, excel
 
 app = FastAPI(
     title="ControlMetrics SPC API",
@@ -32,6 +32,7 @@ app.include_router(carta_c.router,    prefix="/api/carta-c",    tags=["Carta C"]
 app.include_router(capacidad.router,  prefix="/api/capacidad",  tags=["Capacidad"])
 app.include_router(muestreo.router,   prefix="/api/muestreo",   tags=["Muestreo"])
 app.include_router(mejora.router,     prefix="/api/mejora",     tags=["Mejora"])
+app.include_router(excel.router,      prefix="/api/excel",      tags=["Excel"])
 
 
 @app.get("/")

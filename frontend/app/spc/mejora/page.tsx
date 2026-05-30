@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { ModuleShell } from '@/components/spc/ModuleShell';
 import { ChartCard } from '@/components/spc/ChartCard';
+import { useHistory } from '@/hooks/useHistory';
 
 export default function MejoraPage() {
   const [xbar,        setXbar]        = useState('3.2400');
@@ -17,6 +18,7 @@ export default function MejoraPage() {
   const [loading,     setLoading]     = useState(false);
   const [result,      setResult]      = useState<any>(null);
   const [error,       setError]       = useState('');
+  const { add: addHistory } = useHistory();
 
   const run = async () => {
     setError(''); setLoading(true);
@@ -33,6 +35,7 @@ export default function MejoraPage() {
         k:            parseFloat(k),
       });
       setResult(res);
+      addHistory('mejora', { xbar, sigma, n }, { 'Potencia': `${res.sensitivity?.power}%`, 'n req': res.n_required?.n_req });
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -56,6 +59,18 @@ export default function MejoraPage() {
     <ModuleShell
       title="Plan de Mejora"
       subtitle="Sensibilidad del sistema · Curva de potencia · Tamaño de subgrupo óptimo"
+      templateConfig={{
+        module: 'mejora',
+        getParams: () => ({ xbar, sigma, n, t, ucl, lcl, xbarNew, targetPower, k }),
+        onLoad: (p: any) => {
+          if (p.xbar) setXbar(p.xbar); if (p.sigma) setSigma(p.sigma);
+          if (p.n) setN(p.n); if (p.t) setT(p.t);
+          if (p.ucl) setUcl(p.ucl); if (p.lcl) setLcl(p.lcl);
+          if (p.xbarNew) setXbarNew(p.xbarNew);
+          if (p.targetPower) setTargetPower(p.targetPower);
+          if (p.k) setK(p.k);
+        },
+      }}
       leftPanel={
         <>
           <div className="space-y-2">

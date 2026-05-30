@@ -1,6 +1,6 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
-async function post<T>(path: string, body: unknown): Promise<T> {
+async function post<T = any>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -13,7 +13,7 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   return res.json();
 }
 
-async function get<T>(path: string): Promise<T> {
+async function get<T = any>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`);
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
