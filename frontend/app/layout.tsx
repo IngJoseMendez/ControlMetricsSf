@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: "ControlMetrics – Software SPC",
   description: "Plataforma de Control Estadístico de Procesos para la industria agroexportadora. Cartas de control, capacidad de proceso, muestreo MIL-STD-105E y más.",
   keywords: ["SPC", "control estadístico", "calidad", "Cp", "Cpk", "cartas de control", "normalidad"],
+  icons: {
+    icon: "https://res.cloudinary.com/dxl97cptv/image/upload/v1780110707/WhatsApp_Image_2026-05-29_at_9.45.19_PM_kho7wo.jpg",
+    apple: "https://res.cloudinary.com/dxl97cptv/image/upload/v1780110707/WhatsApp_Image_2026-05-29_at_9.45.19_PM_kho7wo.jpg",
+  },
 };
 
 export default function RootLayout({
