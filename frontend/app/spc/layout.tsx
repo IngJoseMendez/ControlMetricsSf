@@ -5,7 +5,8 @@ import { useState } from 'react';
 import {
   Activity, BarChart2, TrendingUp, PieChart,
   FlaskConical, Shield, Zap, ChevronLeft,
-  LogOut, User, Clock, Trash2, ChevronDown, ChevronUp
+  LogOut, User, Clock, Trash2, ChevronDown, ChevronUp,
+  Menu, X,
 } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
@@ -55,6 +56,7 @@ export default function SPCLayout({ children }: { children: React.ReactNode }) {
   const { history, clear } = useHistory();
   const [histOpen, setHistOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navItems = Object.entries(MODULE_KEYS).map(([href, key], i) => ({
     href,
@@ -74,10 +76,42 @@ export default function SPCLayout({ children }: { children: React.ReactNode }) {
     return <AuthModal />;
   }
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
+
+      {/* ── Mobile top bar ── */}
+      <div className="md:hidden fixed top-0 inset-x-0 z-30 h-14 bg-green-900 dark:bg-gray-950 flex items-center gap-3 px-4 shadow-lg flex-shrink-0">
+        <button onClick={() => setSidebarOpen(true)} className="text-white p-1 -ml-1">
+          <Menu className="w-5 h-5" />
+        </button>
+        <img
+          src="https://res.cloudinary.com/dxl97cptv/image/upload/v1780110707/WhatsApp_Image_2026-05-29_at_9.45.19_PM_kho7wo.jpg"
+          alt="Logo"
+          className="w-7 h-7 rounded-md object-cover"
+        />
+        <span className="font-bold text-sm text-white">ControlMetrics</span>
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
+      </div>
+
+      {/* ── Sidebar overlay (mobile) ── */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       {/* ── Sidebar ── */}
-      <aside className="w-60 flex-shrink-0 bg-green-900 dark:bg-gray-950 text-white flex flex-col shadow-xl z-10">
+      <aside className={`
+        fixed md:static inset-y-0 left-0 z-50 md:z-auto
+        w-64 md:w-60 flex-shrink-0 bg-green-900 dark:bg-gray-950 text-white flex flex-col shadow-xl
+        transition-transform duration-300 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
         {/* Logo + controls */}
         <div className="px-4 py-4 border-b border-green-800 dark:border-gray-800">
           <div className="flex items-center gap-2.5 mb-3">
@@ -86,18 +120,22 @@ export default function SPCLayout({ children }: { children: React.ReactNode }) {
               alt="Logo"
               className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
             />
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="font-bold text-sm leading-none">ControlMetrics</p>
               <p className="text-green-400 text-xs mt-0.5">SPC Software</p>
             </div>
+            {/* Close button — mobile only */}
+            <button onClick={closeSidebar} className="md:hidden text-green-400 hover:text-white p-1">
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          {/* Theme toggle */}
-          <div className="flex items-center">
+          {/* Theme toggle — desktop only (mobile has it in top bar) */}
+          <div className="hidden md:flex items-center">
             <ThemeToggle className="flex-1 justify-center" />
           </div>
 
-          <Link href="/"
+          <Link href="/" onClick={closeSidebar}
             className="mt-2 flex items-center gap-1.5 text-green-400 hover:text-white text-xs transition-colors">
             <ChevronLeft className="w-3.5 h-3.5" /> {t.nav.home}
           </Link>
@@ -111,7 +149,7 @@ export default function SPCLayout({ children }: { children: React.ReactNode }) {
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
-              <Link key={href} href={href}
+              <Link key={href} href={href} onClick={closeSidebar}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                   active
                     ? 'bg-white text-green-900 shadow-sm'
@@ -207,8 +245,8 @@ export default function SPCLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto dark:bg-gray-950">
+      {/* ── Main content ── */}
+      <main className="flex-1 overflow-y-auto dark:bg-gray-950 pt-14 md:pt-0">
         {children}
       </main>
     </div>

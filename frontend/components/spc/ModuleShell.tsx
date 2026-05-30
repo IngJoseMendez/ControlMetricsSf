@@ -18,18 +18,18 @@ interface Props {
 
 export function ModuleShell({ title, subtitle, leftPanel, rightPanel, templateConfig }: Props) {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col md:h-full">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex-shrink-0">
-        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{title}</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 md:px-6 py-3 md:py-4 flex-shrink-0">
+        <h1 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">{title}</h1>
+        <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-col md:flex-row flex-1 md:overflow-hidden">
         {/* Left panel */}
-        <aside className="w-72 flex-shrink-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 overflow-y-auto">
-          <div className="p-5 space-y-4">
+        <aside className="w-full md:w-72 flex-shrink-0 bg-white dark:bg-gray-900 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800 md:overflow-y-auto">
+          <div className="p-4 md:p-5 space-y-4">
             {leftPanel}
             {templateConfig && (
               <TemplatePanel
@@ -42,8 +42,8 @@ export function ModuleShell({ title, subtitle, leftPanel, rightPanel, templateCo
         </aside>
 
         {/* Right panel */}
-        <section className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950">
-          <div className="p-5 space-y-5">{rightPanel}</div>
+        <section className="flex-1 bg-gray-50 dark:bg-gray-950 md:overflow-y-auto">
+          <div className="p-4 md:p-5 space-y-4 md:space-y-5">{rightPanel}</div>
         </section>
       </div>
     </div>
