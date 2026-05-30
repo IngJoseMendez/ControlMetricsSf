@@ -60,11 +60,13 @@ export function TemplatePanel({ module, getParams, onLoad }: Props) {
                   onChange={e => setNameInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSave()}
                   placeholder={t.templates.namePlaceholder}
-                  className="flex-1 text-xs border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600" />
+                  className="min-w-0 flex-1 text-xs border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600" />
                 <button onClick={handleSave} disabled={saving || !nameInput.trim()}
-                  className="flex items-center gap-1 bg-green-700 hover:bg-green-800 disabled:opacity-50 text-white text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap">
-                  <BookmarkPlus className="w-3.5 h-3.5" />
-                  {saved ? '✔' : t.templates.save.split(' ')[0]}
+                  title={t.templates.save}
+                  className="flex-shrink-0 flex items-center justify-center w-8 h-8 bg-green-700 hover:bg-green-800 disabled:opacity-50 text-white rounded-lg transition-colors">
+                  {saved
+                    ? <span className="text-xs font-bold">✔</span>
+                    : <BookmarkPlus className="w-4 h-4" />}
                 </button>
               </div>
 
